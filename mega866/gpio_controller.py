@@ -229,6 +229,10 @@ for k, v in pin2Tl866_map.items():
     else:
         raise Exception("WTF")
 
+all_earth_pins = frozenset(all_earth_pins)
+all_water_pins = frozenset(all_water_pins)
+all_fire_pins = frozenset(all_fire_pins)
+all_wind_pins = frozenset(all_wind_pins)
 
 class GpioController:
     def __init__(
