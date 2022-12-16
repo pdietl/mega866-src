@@ -1,5 +1,6 @@
 from gpio_controller import GpioController, all_earth_pins
 from time import sleep
+import sys
 
 # address/data pins
 address_pins = {
@@ -106,12 +107,15 @@ def init_memory():
 def setup(tl866_path):
     controller = GpioController(earth_serial_device=tl866_path)
     controller.init()
+    controller.io_w(0)
     controller.io_tri(pins(*tristate_pins))
     controller.vdd_volt(3) # 5.1V
     controller.vdd_pins(pins(PIN_VCC))
     controller.gnd_pins(pins(PIN_GND1, PIN_GND2))
-    controller.io_w(pins(*ALWAYS_HIGH_PINS, PIN_CLK))
     controller.vdd_en()
+    sleep(0.3)
+    sys.exit(0)
+    controller.io_w(pins(*ALWAYS_HIGH_PINS, PIN_CLK))
     # Now drive RESET high and perform at least 4 clock cycles
     controller.io_w(pins(*ALWAYS_HIGH_PINS))
     sleep(0.0001)
@@ -121,6 +125,9 @@ def setup(tl866_path):
         controller.io_w(pins(*ALWAYS_HIGH_PINS, PIN_RESET, PIN_CLK))
         sleep(0.0001)
         controller.io_w(pins(*ALWAYS_HIGH_PINS, PIN_RESET))
+        sleep(0.0001)
+    sleep(0.0001)
+    controller.io_w(pins(*ALWAYS_HIGH_PINS, PIN_RESET, PIN_CLK))
     sleep(0.0001)
     controller.io_w(pins(*ALWAYS_HIGH_PINS, PIN_CLK))
     sleep(0.0001)
@@ -132,7 +139,7 @@ def run(controller):
     # Clock is high when entering this function
     # Following the reset, the CPU will perform an initial reset sequence of approximately 7 CLK cycles, and then it will fetch the instruction at address 0xffff0
 
-    for i in range(7):
+    for i in range(50):
         controller.io_w(pins(*ALWAYS_HIGH_PINS))
         sleep(0.0001)
         controller.io_w(pins(*ALWAYS_HIGH_PINS, PIN_CLK))
@@ -140,6 +147,10 @@ def run(controller):
         read_pins = controller.io_r()
         address = get_address_pins(read_pins)
         print(f"0x{address:05x}")
+
+    sleep(0.002)
+    controller.io_w(pins(*ALWAYS_HIGH_PINS))
+    controller.init()
 
 def main():
     controller = setup("/dev/serial/by-id/usb-ProgHQ_Open-TL866_Programmer_33144A91666856D18E6084EC-if00")

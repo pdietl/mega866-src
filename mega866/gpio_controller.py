@@ -249,7 +249,7 @@ class GpioController:
 
         def add_device(self, device: Optional[str], instance: Tl866Instance):
             if device is not None:
-                bb = Bitbang(device=device)
+                bb = Bitbang(device=device, verbose=True)
                 bb.instance = instance
                 bb.Tl866Pin2megaPin = Tl866Pin2megaPin_map[instance]
                 self.bitbangers.append(bb)
