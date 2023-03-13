@@ -1,0 +1,11 @@
+The 8086_core.py module takes care of handling the bus interactions with the 8086.
+Currently, the public interface of this module consists of 4 functions:
+
+def read_memory(address, width)
+def write_memory(address, data)
+def read_io(address, width)
+def write_io(address, data)
+
+where width is an instance of the IoWidth enum.
+
+8086 core 

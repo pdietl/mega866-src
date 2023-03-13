@@ -1,0 +1,46 @@
+Sections:
+00: "seg0" (0-FFFE)
+
+
+Source: "prog_6502.asm"
+                        	     1: .org 0
+00:0000 00              	     2: .org 0x8000
+00:0001 *
+                        	     3: 
+                        	     4: .equ OUT_PORT, 0x6000
+                        	     5: 
+                        	     6: start:
+00:8000 A600            	     7: ldx 0
+                        	     8: loop:
+00:8002 BD1380          	     9: lda msg, x
+00:8005 C500            	    10: cmp 0
+00:8007 F007            	    11: beq done
+00:8009 8D0060          	    12: sta OUT_PORT
+00:800C E8              	    13: inx
+00:800D 4C0280          	    14: jmp loop
+                        	    15: 
+                        	    16: done:
+00:8010 4C0080          	    17: jmp start
+                        	    18: 
+00:8013 48656C6C6F20776F	    19: msg: .ascii "Hello world!\n"
+00:801B 726C64210A
+                        	    20: 
+00:8020 00              	    21: .org 0xfffc
+00:8021 *
+00:FFFC 0080            	    22: .word start
+                        	    23: 
+
+
+Symbols by name:
+OUT_PORT                         S:6000
+done                             A:8010
+loop                             A:8002
+msg                              A:8013
+start                            A:8000
+
+Symbols by value:
+6000 OUT_PORT
+8000 start
+8002 loop
+8010 done
+8013 msg
